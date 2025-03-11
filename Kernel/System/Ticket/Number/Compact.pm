@@ -19,7 +19,6 @@
 package Kernel::System::Ticket::Number::Compact;
 
 use strict;
-use warning;
 
 use Math::Base::Convert;
 
@@ -68,17 +67,16 @@ sub TicketNumberBuild {
             || 5;
 
         # Pad ticket number with leading '0' to length $MinSize (config option).
-        $Counter = sprintf "%0.*s", $MinSize, $Counter;
+	# 
+        $Counter = substr(("0" x $MinSize).$Counter, -$MinSize, $MinSize);
     }
 
     my $DateTimeObject = $Kernel::OM->Create(
         'Kernel::System::DateTime'
     );
-    my $DateTimeSettings = $DateTimeObject->Get();
-
     # Create new ticket number.
     my $TicketNumber =
-	$d2sht->cnv( $DateTimeSettings->Format(Format=>'%y%j') )
+	$d2sht->cnv( $DateTimeObject->Format(Format=>'%y%j') )
         . $SystemID . $Counter;
 
     return $TicketNumber;
